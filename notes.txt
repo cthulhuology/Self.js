@@ -1,0 +1,30 @@
+
+
+
+( | slot . slot | 'this is code ' message )
+
+( | slot = value . slot <- mutable | )
+
+[ block ]
+
+Productions: [8]
+
+expression	→	constant | unary-message | binary-message | keyword-message | ‘(’ expression ‘)’
+constant	→	self | number | string | object
+unary-message	→	receiver unary-send | resend ‘.’ unary-send
+unary-send	→	identifier
+binary-message	→	receiver binary-send | resend ‘.’ binary-send
+binary-send	→	operator expression
+keyword-message	→	receiver keyword-send | resend ‘.’ keyword-send
+keyword-send	→	small-keyword expression { cap-keyword expression }
+receiver	→	[ expression ]
+resend	→	resend | identifier
+The table below summarizes Self’s message syntax rules:
+
+MESSAGE	ARGUMENTS	PRECEDENCE	ASSOCIATIVITY	SYNTAX
+Unary	0	highest	none	[receiver] identifier
+binary	1	medium	none or left-to-right*	[receiver] operator expression
+keyword	≥ 1	lowest	right-to-left	[receiver] small-keyword expression { cap-keyword expression }
+
+
+
