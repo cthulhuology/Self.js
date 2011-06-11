@@ -19,25 +19,11 @@ Object.prototype.slot = function(x,y) {
 	return this;
 }
 
-//Object.prototype['<-'] = function(x,y) {
-//	return this.slot(x,y);
-//}
-
-//Object.prototype['='] = function(x,y) {
-//	return this.static(x,y);
-//}
-
 Object.prototype.after = function(i) {
 	var retval = [];
 	for (++i;i < this.length;++i) retval.push(this[i]);
 	return retval;
 }
-
-Object.prototype.send = function(selector) {
-	if (typeof(this[selector]) == 'function') 
-		return this[selector].apply(this,arguments.after(0));
-	return this;
-}	
 
 Object.prototype.list = function() {
 	var retval = [];
@@ -45,32 +31,23 @@ Object.prototype.list = function() {
 	return retval;
 }
 
-Array.prototype.eval = function() {
-	return lobby().globals()[this[0]]().send(this[1],this[2]);
-}
-
-String.prototype.eval = function() {
-	var statement = this.split(/\s/);
-	return statement.eval();
-}
-
 String.prototype.compile = function() {
-	var parts = this.split("->");
+	var parts = this.split("|");
 	return Function.constructor.apply(Function,parts[0].split(/\s/).concat(parts[1]).filter(function(x) { return x != "" }))
 }
 
-Function.prototype.eval = function() {
-	return this.apply(this,arguments);
+Function.prototype.eval = function(selector) {
+	return this[selector].apply(this,arguments.after(0));
 }
 
-window.static('lobby',{});
-lobby().static('globals',{});
-lobby().globals().static('lobby',lobby());
-lobby().globals().static('globals',lobby().globals());
-lobby().globals().static('object',new Object());
-lobby().globals().static('array',new Array());
-lobby().globals().static('block',function() { return Function.constructor.apply(Function,arguments) });
-lobby().globals().static('string',String());
-lobby().globals().static('number',new Number());
+Function.prototype.does = function(selector,definition) {
+	this[selector] = definition.compile();
+	return this;
+}
 
+_ = function() { 
+	var _ = function() { return arguments.callee.eval.apply(arguments.callee,arguments) };
+	if (arguments[0]) window[arguments[0]] = _;
+	return _;
+}
 
