@@ -33,7 +33,7 @@ Object.prototype.list = function() {
 
 String.prototype.compile = function() {
 	var parts = this.split("|");
-	return Function.constructor.apply(Function,parts[0].split(/\s/).concat(parts[1]).filter(function(x) { return x != "" }))
+	return Function.constructor.apply(Function,parts.shift().split(/\s/).concat(parts.join("|")).filter(function(x) { return x != "" }))
 }
 
 Function.prototype.eval = function(selector) {
