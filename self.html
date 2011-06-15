@@ -1,1 +1,44 @@
-<script src="self.js"></script>
+<script src="https://raw.github.com/cthulhuology/Self.js/master/self.js"></script>
+
+<p>
+Let's define an object foo, that has a slot and a method:
+<pre>
+	foo = _().slot('msg','hello world!').does('alert','| alert(this(\"msg\"))')
+</pre>
+<script> 
+foo = _().slot('msg','hello world!').does('alert','| alert(this(\"msg\"))')
+</script>
+
+</p>
+<p>
+This is the equivalent of the Self:
+
+<pre>
+	foo = (| msg <- 'hello world'. alert = (window alert: message) |).
+</pre>
+</p>
+<p>
+To run the message we can invoke it in javascript:
+<br><br>
+<button onclick="javascript:'foo alert'.eval()">
+'foo alert'.eval()
+</button>
+<br><br>
+</p>
+<p>
+We can change the message using the code:
+<br><br>
+<button onclick="javascript:'foo msg: \'goodbye\''.eval()">
+"foo msg: 'goodbye'".eval()
+</button>
+</p>
+<p>
+Now we can invoke 'foo alert'.eval() again:
+<br><br>
+<button onclick="javascript:'foo alert'.eval()">
+'foo alert'.eval()
+</button>
+</p>
+
+More to come
+
