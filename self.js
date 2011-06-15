@@ -7,18 +7,6 @@ Object.prototype.can = function(x) { return typeof(this[x]) == 'function' };
 
 Object.prototype.has = function(x) { return this.hasOwnPrototype(x) };
 
-Object.prototype.static = function(x,y) { 
-	this[x.replace(/\*$/,"")] = function() { return y };
-	return this;
-}
-
-Object.prototype.slot = function(x,y) {
-	this['.' + x] = y;
-	this[x.replace(/\*$/,"")] = function() { return this['.' + x] };
-	this[x.replace(/\*$/,"")+":"] = function(y) { this['.' + x] = y; return this }
-	return this;
-}
-
 Object.prototype.after = function(i) {
 	var retval = [];
 	for (++i;i < this.length;++i) retval.push(this[i]);
@@ -29,6 +17,15 @@ Object.prototype.list = function() {
 	var retval = [];
 	for (var i = 0; i < this.length; ++i) retval.push(this[i]);
 	return retval;
+}
+
+Array.prototype.eval = function() {
+	var self = eval(this[0]);
+	return self.apply(self, this.after(0));
+}
+
+String.prototype.eval = function() {
+	return this.split(/\s+/).eval();
 }
 
 String.prototype.compile = function() {
@@ -42,6 +39,18 @@ Function.prototype.eval = function(selector) {
 
 Function.prototype.does = function(selector,definition) {
 	this[selector] = definition.compile();
+	return this;
+}
+
+Function.prototype.static = function(x,y) { 
+	this[x.replace(/\*$/,"")] = function() { return y };
+	return this;
+}
+
+Function.prototype.slot = function(x,y) {
+	this['.' + x] = y;
+	this[x.replace(/\*$/,"")] = function() { return this['.' + x]};
+	this[x.replace(/\*$/,"")+":"] = function(y) { this['.' + x] = y; return this };
 	return this;
 }
 
