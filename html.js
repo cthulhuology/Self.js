@@ -16,6 +16,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+$ = document.querySelector;
+
 _('HTML')
 	('slot:','tag')
 	('does:','element:', 'x| @(tag: ,document.body.appendChild(document.createElement(x)))')
