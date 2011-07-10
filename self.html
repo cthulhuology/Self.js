@@ -3,8 +3,9 @@
 <script src="webtk.js"></script>
 <script src="parser.js"></script>
 <script src="compiler.js"></script>
+<script src="os.js"></script>
 <script language="self">
-(| hello = ( console log: 'hello world' ) |).
+(| hello = ( os console log: 'hello world' ) |).
 </script>
 <body></body>
 <script>
@@ -14,6 +15,9 @@ HTML("element:","button")("id:","doit")("contains:","Do it!")
 	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '5%' })
 HTML("element:","button")("id:","compit")("contains:","Compile it!")
 	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '35%'  })
+	('on:','click',function(e) { 
+		console("log:", compiler("parser")("parse:", editor.value));
+	})
 HTML("element:","button")("id:","clearit")("contains:","Clear it!")
 	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '65%'  })
 </script>
