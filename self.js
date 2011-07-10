@@ -68,7 +68,11 @@ String.does(
 		while(body.match(/\^/)) body = body.replace(/\^/,"return ");
 		if (! body.match(/return /)) body += "; return this";
 		return Function.constructor.apply(Function,params.concat(body).removeEmpty())
-	})
+	},
+	'unary', function() {
+		return this.charAt(this.length-1) != ":";
+	}
+	)
 
 Function.does(
 	'eval', function(selector) { 

@@ -16,7 +16,9 @@ HTML("element:","button")("id:","doit")("contains:","Do it!")
 HTML("element:","button")("id:","compit")("contains:","Compile it!")
 	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '35%'  })
 	('on:','click',function(e) { 
-		console("log:", compiler("parser")("parse:", editor.value));
+		console("log:", compiler("parse:", editor.value));
+		console("log:", compiler("compile"));
+		
 	})
 HTML("element:","button")("id:","clearit")("contains:","Clear it!")
 	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '65%'  })

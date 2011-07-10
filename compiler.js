@@ -18,4 +18,29 @@
 _('compiler')
 	('slot:','tokens')
 	('static:','parser',parser)
-	('does:','compile:','s | @("tokens:", @("parser")("parse:", s))')
+	('does:','parse:','s | @("tokens:", @("parser")("parse:", s)); ^ @("tokens")')
+	('does:','unary:', function(s) { return s.charAt(s.length-1) != ":" })
+	('does:','compile', function() {
+		var script = '';
+		var toks = compiler("tokens");
+		for (var i = 0; i < toks.length; ++i) {
+			if (i == 0) { 
+				if(compiler("unary:",toks[i])){	
+					console("log:","unary")
+					script += toks[i];
+				} else {
+					console("error:","not unary")
+				}
+				
+			} else {
+				if(compiler("unary:",toks[i])){	
+					console("log:","unary");
+					script += "('" + toks[i] + "')";
+				} else {
+					console("log:","not unary");
+
+				}
+			}
+		}
+		return script;
+	})

@@ -2,9 +2,6 @@ Self.js
 
 This will eventually be an implementation of the Self programming language http://selflanguage.org/ in Javascript.  For the time being, it is more an experimental web framework for building applications in a language not entirely unlike Self.
 
-
-
-
 This code is licensed under the GNU Affero Public License http://www.gnu.org/licenses/agpl.html
 
 Dave Goehrig
