@@ -1,4 +1,4 @@
-// html.js
+// parser.js
 //
 // © 2011 David J. Goehrig
 //
@@ -11,21 +11,19 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
-// 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-
-_('HTML')
-	('slot:','tag')
-	('does:','element:', 'x| @(tag: ,document.body.appendChild(document.createElement(x)))')
-	('does:','contains:','s,x,y| @(tag).innerHTML = s.substr(x,y)')
-	('does:','add:','e | @(tag).appendChild(e)')
-	('does:','style:','o| for(var k in o) if (o.has(k)) @(tag).style[k] = o[k]')
-	('does:','to:','x,y| @(tag).style.top = y + "px"; @(tag).style.left = x + "px"')
-	('does:','src:','u | @(tag).src = u')
-	('does:','id:','i | window[i] = @(tag); @(tag).id = i')
-	('does:','class:','c | @(tag).className = c')
-	('does:','on:', 'M,F| var self = this; \
-		@(does: ,M,F); \
-		@(tag).addEventListener(M, function(E) { if (self.can(M)) self(M,E) }, false)')
+	
+_('parser')
+	('does:','parse:', 's | ^ parser("asTokens:", parser("asWords:",s))')
+	('does:','asWords:','s | ^ s.split(/\\s+/)')
+	('does:','asTokens:',function(a) {
+		return [[]].concat(a.
+			map(function(X) { 
+				return X.split(/([-+!@#$^%&*()=\[\]()<>{}|?\\\/.,'"])/) })).
+			reduce(function(X,Y) { 
+				return X.concat(Y) }).
+			filter(function(Z) { 
+				return Z != "" })
+		})

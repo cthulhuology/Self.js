@@ -16,63 +16,85 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-Object.prototype.can = function(x) { return typeof(this[x]) == 'function' };
-Object.prototype.has = function(x) { return this.hasOwnProperty(x) };
+Object.prototype.does = function() { 
+	for (var i = 0; i < arguments.length; i += 2) this.prototype[arguments[i]] = arguments[i+1]
+};
 
-Object.prototype.after = function(i) {
-	var retval = [];
-	for (++i;i < this.length;++i) retval.push(this[i]);
-	return retval;
-}
+Object.does(
+	'can',function(x) { 
+		return typeof(this[x]) == 'function' 
+	},
+	'has', function(x) { 
+		return this.hasOwnProperty(x) 
+	},
+	'after', function(i) {
+		var retval = [];
+		for (++i;i < this.length;++i) retval.push(this[i]);
+		return retval 
+	},
+	'list', function() {
+		return this.after(0) 
+	})
 
-Object.prototype.list = function() {
-	var retval = [];
-	for (var i = 0; i < this.length; ++i) retval.push(this[i]);
-	return retval;
-}
+Array.does(
+	'eval',function() {
+		var self = eval(this[0]);
+		return self.apply(self, this.after(0)) 
+	},
+	'removeEmpty', function() { 
+		return this.filter(function(x) { return x != "" })
+	})
 
-Array.prototype.eval = function() {
-	var self = eval(this[0]);
-	return self.apply(self, this.after(0));
-}
+String.does(
+	'get', function(then) {
+		var self = this;
+		var _request = XMLHttpRequest ? new XMLHttpRequest(): _doc.createRequest();
+		_request.onreadystatechange = function() {
+               		if (this.readyState != 4) return;
+                	if (this.status == 404) then(null);
+                	if (this.status == 200) then(this.responseText);
+		};
+        	_request.open('GET',this,true);
+        	_request.send()
+	},
+	'eval', function() { 
+		return this.split(/\s+/).eval() 
+	},
+	'compile', function() {
+		var parts = this.split("|");
+		var params = parts.shift().split(/\s/);
+		var body = parts.join("|");
+		while(body.match(/@/)) 
+			body = body.replace(/@\((\w+:*)(.*)\)/gm,'this("$1"$2)');
+		while(body.match(/\^/))
+			body = body.replace(/\^/,"return ");
+		if (! body.match(/return /)) body += "; return this";
+		return Function.constructor.apply(Function,params.concat(body).removeEmpty())
+	})
 
-String.prototype.eval = function() {
-	return this.split(/\s+/).eval();
-}
-
-String.prototype.compile = function() {
-	var parts = this.split("|");
-	var params = parts.shift().split(/\s/);
-	var body = parts.join("|");
-	while(body.match(/@/)) body = body.replace(/@\((\w+:*)(.*)\)/gm,'this("$1"$2)');
-	if (! body.match(/return /)) body += "; return this";
-	return Function.constructor.apply(Function,params.concat(body).filter(function(x) { return x != "" }))
-}
-
-Function.prototype.eval = function(selector) {
-	return this[selector].apply(this,arguments.after(0));
-}
-
-Function.prototype['does:'] = function(selector,definition) {
-	this[selector] = definition.compile();
-	return this;
-}
-
-Function.prototype['static:'] = function(x,y) { 
-	this[x.replace(/\*$/,"")] = function() { return y };
-	return this;
-}
-
-Function.prototype['slot:'] = function(x,y) {
-	this['.' + x] = y;
-	this[x.replace(/\*$/,"")] = function() { return this['.' + x]};
-	this[x.replace(/\*$/,"")+":"] = function(y) { this['.' + x] = y; return this };
-	return this;
-}
+Function.does(
+	'eval', function(selector) { 
+		return this[selector].apply(this,arguments.after(0)) 
+	},
+	'does:', function(selector,definition) { 
+		this[selector] = typeof(definition) == 'string' ?
+			definition.compile():
+			definition;
+		return this 
+	},
+	'static:', function(x,y) { 
+		this[x.replace(/\*$/,"")] = function() { return y };
+		return this 
+	},
+	'slot:', function(x,y) {
+		this['.' + x] = y;
+		this[x.replace(/\*$/,"")] = function() { return this['.' + x]};
+		this[x.replace(/\*$/,"")+":"] = function(y) { this['.' + x] = y; return this };
+		return this
+	})
 
 _ = function() { 
 	var _ = function() { return arguments.callee.eval.apply(arguments.callee,arguments) };
 	if (arguments[0]) window[arguments[0]] = _;
-	return _;
-}
+	return _ }
 

@@ -1,2 +1,12 @@
 <script src="self.js"></script>
 <script src="html.js"></script>
+<script src="webtk.js"></script>
+<script src="parser.js"></script>
+<script language="self">
+(| hello = ( console log: 'hello world' ) |).
+</script>
+<script>
+window.onload = function() {
+button = HTML('element:','button')('contains:','test button')('style:',{ position:'absolute', border: 0, color: 'white', background: 'darkgreen'})('on:','click','e| console.log(this); console.log(e)')('to:',200,100)
+}
+</script>
