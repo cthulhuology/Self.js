@@ -64,10 +64,8 @@ String.does(
 		var parts = this.split("|");
 		var params = parts.shift().split(/\s/);
 		var body = parts.join("|");
-		while(body.match(/@/)) 
-			body = body.replace(/@\((\w+:*)(.*)\)/gm,'this("$1"$2)');
-		while(body.match(/\^/))
-			body = body.replace(/\^/,"return ");
+		while(body.match(/@/)) body = body.replace(/@/gm,'this');
+		while(body.match(/\^/)) body = body.replace(/\^/,"return ");
 		if (! body.match(/return /)) body += "; return this";
 		return Function.constructor.apply(Function,params.concat(body).removeEmpty())
 	})

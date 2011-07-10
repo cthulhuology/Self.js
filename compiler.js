@@ -16,4 +16,6 @@
 //
 	
 _('compiler')
+	('slot:','tokens')
 	('static:','parser',parser)
+	('does:','compile:','s | @("tokens:", @("parser")("parse:", s))')

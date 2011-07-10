@@ -20,14 +20,14 @@ $ = document.querySelector;
 
 _('HTML')
 	('slot:','tag')
-	('does:','element:', 'x| @(tag: ,document.body.appendChild(document.createElement(x)))')
-	('does:','contains:','s,x,y| @(tag).innerHTML = s.substr(x,y)')
-	('does:','add:','e | @(tag).appendChild(e)')
-	('does:','style:','o| for(var k in o) if (o.has(k)) @(tag).style[k] = o[k]')
-	('does:','to:','x,y| @(tag).style.top = y + "px"; @(tag).style.left = x + "px"')
-	('does:','src:','u | @(tag).src = u')
-	('does:','id:','i | window[i] = @(tag); @(tag).id = i')
-	('does:','class:','c | @(tag).className = c')
+	('does:','element:', 'x| @("tag:",document.body.appendChild(document.createElement(x)))')
+	('does:','contains:','s,x,y| @("tag").innerHTML = s.substr(x,y)')
+	('does:','add:','e | @("tag").appendChild(e)')
+	('does:','style:','o| for(var k in o) if (o.has(k)) @("tag").style[k] = o[k]')
+	('does:','to:','x,y| @("tag").style.top = y + "px"; @("tag").style.left = x + "px"')
+	('does:','src:','u | @("tag").src = u')
+	('does:','id:','i | window[i] = @("tag"); @("tag").id = i')
+	('does:','class:','c | @("tag").className = c')
 	('does:','on:', 'M,F| var self = this; \
-		@(does: ,M,F); \
-		@(tag).addEventListener(M, function(E) { if (self.can(M)) self(M,E) }, false)')
+		@("does:",M,F); \
+		@("tag").addEventListener(M, function(E) { if (self.can(M)) self(M,E) }, false)')

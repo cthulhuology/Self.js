@@ -16,7 +16,7 @@
 //
 	
 _('parser')
-	('does:','parse:', 's | ^ parser("asTokens:", parser("asWords:",s))')
+	('does:','parse:', 's | ^ @("asTokens:", @("asWords:",s))')
 	('does:','asWords:','s | ^ s.split(/\\s+/)')
 	('does:','asTokens:',function(a) {
 		return [[]].concat(a.
