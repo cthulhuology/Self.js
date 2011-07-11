@@ -28,6 +28,7 @@ _('HTML')
 	('does:','src:','u | @("tag").src = u')
 	('does:','id:','i | window[i] = @("tag"); @("tag").id = i')
 	('does:','class:','c | @("tag").className = c')
-	('does:','on:', 'M,F| var self = this; \
-		@("does:",M,F); \
-		@("tag").addEventListener(M, function(E) { if (self.can(M)) self(M,E) }, false)')
+	('does:','on:', 'M,F| var self = @("tag"); \
+		@("tag")[M] = F; \
+		@("tag").addEventListener(M, function(E) { if (self.can(M)) self[M](E) }, false)')
+

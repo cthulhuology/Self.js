@@ -1,3 +1,7 @@
+<!HTML>
+<html>
+<head>
+<title>Self.JS Test Bed</title>
 <script src="self.js"></script>
 <script src="html.js"></script>
 <script src="webtk.js"></script>
@@ -6,21 +10,8 @@
 <script src="os.js"></script>
 <script language="self">
 (| hello = ( os console log: 'hello world' ) |).
-</script>
-<body></body>
-<script>
-HTML("element:","textarea")("id:","editor")
-	('style:', {position: 'absolute',width: '100%', height: '80%', top: 0, left: 0 })
-HTML("element:","button")("id:","doit")("contains:","Do it!")
-	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '5%' })
-HTML("element:","button")("id:","compit")("contains:","Compile it!")
-	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '35%'  })
-	('on:','click',function(e) { 
-		console("log:", compiler("parse:", editor.value));
-		console("log:", compiler("compile"));
-		
-	})
-HTML("element:","button")("id:","clearit")("contains:","Clear it!")
-	('style:',{position: 'absolute',width: '30%', height: '10%', top: '85%', left: '65%'  })
-</script>
-
+</script></head>
+<body>
+<script src="editor.js"></script>
+</body>
+</html>

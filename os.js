@@ -14,11 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-	
+
 _("os")
 	("static:","Console",console)
 	("static:","console",_("console")
 		("does:","log:",'|os("Console").log.apply(os("Console"),arguments)')
 		("does:","info:",'|os("Console").info.apply(os("Console"),arguments)')
 		("does:","warn:",'|os("Console").warn.apply(os("Console"),arguments)')
-		("does:","error:",'|os("Console").error.apply(os("Console"),arguments)'))
+		("does:","error:",'|os("Console").error.apply(os("Console"),arguments)')
+		("does:","alert:",'m|alert(m)'))
