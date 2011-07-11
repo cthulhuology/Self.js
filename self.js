@@ -46,7 +46,7 @@ Array.does(
 	})
 
 String.does(
-	'get', function(then) {
+	'xhr', function(method,then,data,headers) {
 		var self = this;
 		var _request = XMLHttpRequest ? new XMLHttpRequest(): _doc.createRequest();
 		_request.onreadystatechange = function() {
@@ -54,8 +54,11 @@ String.does(
                 	if (this.status == 404) then(null);
                 	if (this.status == 200) then(this.responseText);
 		};
-        	_request.open('GET',this,true);
-        	_request.send()
+        	_request.open(method,this,true);
+        	_request.send(data)
+	},
+	'get', function(then) {
+		return this.xhr('GET',then);
 	},
 	'eval', function() { 
 		return this.split(/\s+/).eval() 
@@ -68,11 +71,7 @@ String.does(
 		while(body.match(/\^/)) body = body.replace(/\^/,"return ");
 		if (! body.match(/return /)) body += "; return this";
 		return Function.constructor.apply(Function,params.concat(body).removeEmpty())
-	},
-	'unary', function() {
-		return this.charAt(this.length-1) != ":";
-	}
-	)
+	})
 
 Function.does(
 	'eval', function(selector) { 
