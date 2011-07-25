@@ -39,7 +39,7 @@ Object.does(
 Array.does(
 	'eval',function() {
 		var self = eval(this[0]);
-		return self.apply(self, this.after(0)) 
+		return self[this[1]].apply(self, this.after(1)) 
 	},
 	'removeEmpty', function() { 
 		return this.filter(function(x) { return x != "" })
