@@ -33,7 +33,9 @@ Object.does(
 		return retval 
 	},
 	'list', function() {
-		return this.after(0) 
+		var retval = [];
+		for (var i=0;i < this.length;++i) retval.push(this[i]);
+		return retval 
 	})
 
 Array.does(
