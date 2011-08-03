@@ -25,13 +25,15 @@ Number.does(
 	'&', function() { var x = this; return function(y) { return x & y }},
 	'|', function() { var x = this; return function(y) { return x | y }},
 	'^', function() { var x = this; return function(y) { return x ^ y }},
-	',', function() { var x = this.valueOf(); console('log:',this); return function(y) { return [].concat(x,y) }}
+	',', function() { var x = this.valueOf(); console('log:',this); return function(y) { return [].concat(x,y) }},
+	'->', function(y) { var x = this.valueOf(); return function(y) { return window[y] = x }}
 	)
 
 String.does(
 	',', function(y) { var x = this; return function(y) { return x + y.toString() }},
 	'@', function(y) { var x = this; return function(y) { return x.charAt(y) }},
-	'=', function(y) { var x = this; return function(y) { window[x] = y }}
+	'number', function() { return this.match(/^\d+$/) ? true : false },
+	'string', function() { return this.match(/^'.*'$/) ? true : false }
 	)
 
 Array.does(
@@ -39,8 +41,18 @@ Array.does(
 	)
 
 Object.does(
-	'@', function(y) { var x = this; return function(y) { return x[y] }}
+	'=', function() { var x = this; return function(y) { return x == y }},
+	';', function() { return function(y) { return y }},
+	'@', function(y) { var x = this; return function(y) { return x[y] }},
+	'->', function(y) { var x = this; return function(y) { return window[y] = x }},
+	'symbol', function() { 
+		return this.number() ? this*1 : 
+			this.string() ? this :
+			"__['" + this + "']";
+	}
 	)
+
+__ = window;
 
 _('compiler')
 	('slot:','script')
@@ -56,12 +68,14 @@ var stack = [];
 Array.does(
 	'eval', function() {
 		var msg = this.shift();
-		var script = "return " + (window.has(msg) ? msg : "'" + msg + "'");
+		var script = "return " + msg.symbol();
 		while (this.length > 0) {
 			var msg = this.shift();
 			script += "['" + msg + "']()";
-			msg = this.shift();
-			script += "(" + msg + ")";
+			var arg = this.shift();
+			msg == "->" ? 
+				script += "('" + arg + "')" :
+				script += "(" + arg.symbol() +  ")";
 		}
 		console('log:',script);
 		return Function.constructor.apply(Function,[ script ])();
