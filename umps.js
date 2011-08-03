@@ -17,23 +17,25 @@
 // 
 
 Number.does(
-	'+', function() { var x = this; return function(y) { return x + y }},
-	'-', function() { var x = this; return function(y) { return x - y }},
-	'*', function() { var x = this; return function(y) { return x * y }},
-	'/', function() { var x = this; return function(y) { return x / y }},
-	'%', function() { var x = this; return function(y) { return x % y }},
-	'&', function() { var x = this; return function(y) { return x & y }},
-	'|', function() { var x = this; return function(y) { return x | y }},
-	'^', function() { var x = this; return function(y) { return x ^ y }},
-	',', function() { var x = this.valueOf(); console('log:',this); return function(y) { return [].concat(x,y) }},
-	'->', function(y) { var x = this.valueOf(); return function(y) { return window[y] = x }}
+	'+', function() { var x = this; return function(y) { return _(x + y) }},
+	'-', function() { var x = this; return function(y) { return _(x - y) }},
+	'*', function() { var x = this; return function(y) { return _(x * y) }},
+	'/', function() { var x = this; return function(y) { return _(x / y) }},
+	'%', function() { var x = this; return function(y) { return _(x % y) }},
+	'&', function() { var x = this; return function(y) { return _(x & y) }},
+	'|', function() { var x = this; return function(y) { return _(x | y) }},
+	'^', function() { var x = this; return function(y) { return _(x ^ y) }},
+	',', function() { var x = this; console('log:',this); return function(y) { return [].concat(x,y) }},
+	'->', function(y) { var x = this; return function(y) { return window[y] = x }},
+	'number', function() { return true }
 	)
 
 String.does(
-	',', function(y) { var x = this; return function(y) { return x + y.toString() }},
-	'@', function(y) { var x = this; return function(y) { return x.charAt(y) }},
-	'number', function() { return this.match(/^\d+$/) ? true : false },
-	'string', function() { return this.match(/^'.*'$/) ? true : false }
+	',', function(y) { var x = this; return function(y) { return x.toString() + y.toString() }},
+	'@', function(y) { var x = this; return function(y) { return x.toString().charAt(y) }},
+	'number', function() { return this.toString().match(/^\d+$/) ? true : false },
+	'string', function() { return this.toString().match(/^'.*'$/) ? true : false },
+	'eval', function(selector) { return this[selector].apply(this,arguments.after(0)) }
 	)
 
 Array.does(
@@ -42,36 +44,28 @@ Array.does(
 
 Object.does(
 	'=', function() { var x = this; return function(y) { return x == y }},
-	';', function() { return function(y) { return y }},
+	';', function() { return function(y) { return typeof(y) == "function" ? y : _(y) }},
 	'@', function(y) { var x = this; return function(y) { return x[y] }},
 	'->', function(y) { var x = this; return function(y) { return window[y] = x }},
 	'symbol', function() { 
 		return this.number() ? this*1 : 
 			this.string() ? this :
-			"__['" + this + "']";
-	}
+			this.toString() },
+	'number', function() { return false },
+	'string', function() { return false }
 	)
 
 __ = window;
-
-_('compiler')
-	('slot:','script')
-	('does:','parse:', "s| @('script:', s.split(/\\s+/).removeEmpty())")
-	('does:','compile', function() {
-		this('script');
-		console('log:',this('script'));
-	})
-	('does:','run', "| console('log:',@('script').eval())")
 
 
 var stack = [];
 Array.does(
 	'eval', function() {
 		var msg = this.shift();
-		var script = "return " + msg.symbol();
+		var script = "return _(" + msg.symbol() + ")";
 		while (this.length > 0) {
 			var msg = this.shift();
-			script += "['" + msg + "']()";
+			script += "('" + msg + "')";
 			var arg = this.shift();
 			msg == "->" ? 
 				script += "('" + arg + "')" :
@@ -80,3 +74,36 @@ Array.does(
 		console('log:',script);
 		return Function.constructor.apply(Function,[ script ])();
 	})
+
+Function.does(
+	'copy', function(o) { for (k in o) if (o.has(k)) this[k] = o[k]; return this },
+	'oldToString', Function.prototype.toString,
+	'toString', function() { return this.has('.string') ? this['.string'] : this.oldToString() }, 
+	'define', function(k) { return window[k] = this }
+	)
+
+_ = function() { 
+	var _ = function() { return arguments.callee.eval.apply(arguments.callee,arguments) };
+	if (arguments[0])
+		arguments[0].number() ? _.copy(Number.prototype)('static:','valueOf', arguments[0]) :
+		_.copy(String.prototype).copy({ '.string':arguments[0]}) ;
+	return _ }
+
+_()('define','compiler')
+	('slot:','script')
+	('does:','parse:', "s| @('script:', s.split(/\\s+/).removeEmpty())")
+	('does:','compile', function() {
+		this('script');
+		console('log:',this('script'));
+	})
+	('does:','run', "| console('log:',@('script').eval())")
+
+_()("define","os")
+	("static:","Console",console)
+	("static:","console",_()
+		("define","console")
+		("does:","log:",'|os("Console").log.apply(os("Console"),arguments)')
+		("does:","info:",'|os("Console").info.apply(os("Console"),arguments)')
+		("does:","warn:",'|os("Console").warn.apply(os("Console"),arguments)')
+		("does:","error:",'|os("Console").error.apply(os("Console"),arguments)')
+		("does:","alert:",'m|alert(m)'))
