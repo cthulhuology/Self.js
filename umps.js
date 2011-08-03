@@ -31,8 +31,8 @@ Number.does(
 	)
 
 String.does(
-	',', function(y) { var x = this; return function(y) { return x.toString() + y.toString() }},
-	'@', function(y) { var x = this; return function(y) { return x.toString().charAt(y) }},
+	',', function(y) { var x = this; return function(y) { return _(x.toString() + y.toString()) }},
+	'@', function(y) { var x = this; return function(y) { return _(x.toString().charAt(y)) }},
 	'number', function() { return this.toString().match(/^\d+$/) ? true : false },
 	'string', function() { return this.toString().match(/^'.*'$/) ? true : false },
 	'eval', function(selector) { return this[selector].apply(this,arguments.after(0)) }
