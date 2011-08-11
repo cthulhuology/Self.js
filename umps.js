@@ -39,7 +39,9 @@ String.does(
 	)
 
 Array.does(
-	',', function(y) { var x = this; return function(y) { return x.concat(y) }}
+	'eval', function(selector) { return this[selector].apply(this,arguments.after(0)) },
+	',', function(y) { var x = this; return function(y) { return _(x['.array'].concat(y)) }},
+	'@', function(y) { var x = this; return function(y) { return _(x['.array'][y]) }}
 	)
 
 Object.does(
@@ -52,15 +54,14 @@ Object.does(
 			this.string() ? this :
 			this.toString() },
 	'number', function() { return false },
-	'string', function() { return false }
+	'string', function() { return false },
+	'array', function() { return false }
 	)
-
-__ = window;
-
 
 var stack = [];
 Array.does(
-	'eval', function() {
+	'array', function() { return true },
+	'do', function() {
 		var msg = this.shift();
 		var script = "return _(" + msg.symbol() + ")";
 		while (this.length > 0) {
@@ -86,6 +87,7 @@ _ = function() {
 	var _ = function() { return arguments.callee.eval.apply(arguments.callee,arguments) };
 	if (arguments[0])
 		arguments[0].number() ? _.copy(Number.prototype)('static:','valueOf', arguments[0]) :
+		arguments[0].array() ? _.copy(Array.prototype).copy({ '.array' : arguments[0] }) :
 		_.copy(String.prototype).copy({ '.string':arguments[0]}) ;
 	return _ }
 
@@ -96,7 +98,7 @@ _()('define','compiler')
 		this('script');
 		console('log:',this('script'));
 	})
-	('does:','run', "| console('log:',@('script').eval())")
+	('does:','run', "| console('log:',@('script').do())")
 
 _()("define","os")
 	("static:","Console",console)
